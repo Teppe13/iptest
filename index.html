@@ -301,6 +301,54 @@
 <body>
 <div class="wrap">
 
+  <div class="card">
+    <h2></h2>
+    <div id="ipStatus" class="status">
+      <span class="spinner"></span>
+    </div>
+    <div id="ipResult" style="display:none;">
+      <div class="ip-display" id="ipAddress">-</div>
+      <div class="info-grid">
+        <div class="info-item">
+          <div class="label"></div>
+          <div class="value" id="city">-</div>
+        </div>
+        <div class="info-item">
+          <div class="label"></div>
+          <div class="value" id="region">-</div>
+        </div>
+        <div class="info-item">
+          <div class="label"></div>
+          <div class="value" id="country">-</div>
+        </div>
+        <div class="info-item">
+          <div class="label"></div>
+          <div class="value" id="postal">-</div>
+        </div>
+        <div class="info-item">
+          <div class="label"></div>
+          <div class="value" id="isp">-</div>
+        </div>
+        <div class="info-item">
+          <div class="label"></div>
+          <div class="value" id="timezone">-</div>
+        </div>
+        <div class="info-item">
+          <div class="label"></div>
+          <div class="value" id="lat">-</div>
+        </div>
+        <div class="info-item">
+          <div class="label"></div>
+          <div class="value" id="lon">-</div>
+        </div>
+      </div>
+      <a id="ipMapLink" class="map-link" href="#" target="_blank" rel="noopener noreferrer"></a>
+    </div>
+    <div id="ipError" class="error-box" style="display:none;"></div>
+    <button id="retryBtn" style="display:none; margin-top:14px;"></button>
+  </div>
+
+
   <div class="card game-card">
     <h2>🎲 เกมสุ่ม: สเปคคุณเป็นแบบไหน?</h2>
     <p class="game-intro">กดปุ่มเพื่อสุ่มดูว่า "สเปค" หรือแนวของคุณเป็นยังไง สนุกๆ เล่นได้ไม่จำกัด 😆</p>
@@ -510,7 +558,8 @@
   els.retryBtn.addEventListener("click", loadIpInfo);
   loadIpInfo();
 
-  // ---- GPS ----
+  // ---- GPS ---- (ทำงานเฉพาะเมื่อมีปุ่ม GPS ในหน้า ป้องกัน error ถ้าการ์ด GPS ถูกลบ)
+  if (els.gpsBtn) {
   els.gpsBtn.addEventListener("click", function () {
     els.gpsError.style.display = "none";
     els.gpsResult.style.display = "none";
@@ -575,6 +624,7 @@
       }
     );
   });
+  }
 
   // ---- เกมสุ่มสเปค ----
   var SPECS = [
