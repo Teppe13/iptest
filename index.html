@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>เช็ก IP ของฉัน</title>
+<style>
+  :root {
+    --bg: #0f172a;
+    --card: #1e293b;
+    --card-border: #334155;
+    --text: #e2e8f0;
+    --text-dim: #94a3b8;
+    --accent: #38bdf8;
+    --accent-dark: #0284c7;
+    --ok: #4ade80;
+    --err: #f87171;
+    --radius: 14px;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background: radial-gradient(circle at top, #1e293b 0%, #0f172a 60%);
+    color: var(--text);
+    font-family: "Segoe UI", "Noto Sans Thai", Tahoma, sans-serif;
+    display: flex;
+    justify-content: center;
+    padding: 32px 16px;
+  }
+
+  .wrap {
+    width: 100%;
+    max-width: 640px;
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 24px;
+  }
+
+  header h1 {
+    font-size: 1.6rem;
+    margin: 0 0 6px;
+  }
+
+  header p {
+    color: var(--text-dim);
+    margin: 0;
+    font-size: 0.95rem;
+  }
+
+  .card {
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius);
+    padding: 24px;
+    margin-bottom: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+  }
+
+  .card h2 {
+    margin: 0 0 16px;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .ip-display {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: 1px;
+    word-break: break-all;
+    text-align: center;
+    padding: 12px 0;
+  }
+
+  .info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 8px;
+  }
+
+  @media (max-width: 480px) {
+    .info-grid { grid-template-columns: 1fr; }
+  }
+
+  .info-item {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--card-border);
+    border-radius: 10px;
+    padding: 12px 14px;
+  }
+
+  .info-item .label {
+    color: var(--text-dim);
+    font-size: 0.78rem;
+    margin-bottom: 4px;
+  }
+
+  .info-item .value {
+    font-size: 1rem;
+    font-weight: 600;
+    word-break: break-word;
+  }
+
+  .map-link {
+    display: inline-block;
+    margin-top: 14px;
+    color: var(--accent);
+    text-decoration: none;
+    font-size: 0.9rem;
+  }
+  .map-link:hover { text-decoration: underline; }
+
+  button {
+    background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+    color: #fff;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    width: 100%;
+    transition: opacity 0.15s ease, transform 0.15s ease;
+  }
+
+  button:hover { opacity: 0.92; }
+  button:active { transform: scale(0.98); }
+  button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .status {
+    text-align: center;
+    color: var(--text-dim);
+    font-size: 0.9rem;
+    padding: 20px 0;
+  }
+
+  .error-box {
+    background: rgba(248, 113, 113, 0.1);
+    border: 1px solid var(--err);
+    color: var(--err);
+    border-radius: 10px;
+    padding: 14px;
+    font-size: 0.9rem;
+    margin-top: 10px;
+  }
+
+  .badge {
+    display: inline-block;
+    font-size: 0.72rem;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: rgba(74, 222, 128, 0.15);
+    color: var(--ok);
+    border: 1px solid rgba(74, 222, 128, 0.4);
+    margin-left: 6px;
+  }
+
+  .spinner {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255,255,255,0.25);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    vertical-align: middle;
+    margin-right: 8px;
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  footer {
+    text-align: center;
+    color: var(--text-dim);
+    font-size: 0.78rem;
+    margin-top: 8px;
+  }
+
+  footer a { color: var(--accent); }
+
+  .privacy-note {
+    text-align: center;
+    color: var(--text-dim);
+    font-size: 0.76rem;
+    margin: 4px 0 16px;
+    line-height: 1.5;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>🌐 เช็ก IP และตำแหน่งของคุณ</h1>
+    <p>ข้อมูลนี้ดึงจาก IP address ของอุปกรณ์ที่ใช้เปิดหน้านี้ ความแม่นยำเป็นระดับเมือง/ภูมิภาคเท่านั้น</p>
+  </header>
+
+  <div class="card">
+    <h2>📍 ข้อมูลจาก IP Address</h2>
+    <div id="ipStatus" class="status">
+      <span class="spinner"></span>กำลังดึงข้อมูล...
+    </div>
+    <div id="ipResult" style="display:none;">
+      <div class="ip-display" id="ipAddress">-</div>
+      <div class="info-grid">
+        <div class="info-item">
+          <div class="label">เมือง</div>
+          <div class="value" id="city">-</div>
+        </div>
+        <div class="info-item">
+          <div class="label">จังหวัด / ภูมิภาค</div>
+          <div class="value" id="region">-</div>
+        </div>
+        <div class="info-item">
+          <div class="label">ประเทศ</div>
+          <div class="value" id="country">-</div>
+        </div>
+        <div class="info-item">
+          <div class="label">รหัสไปรษณีย์</div>
+          <div class="value" id="postal">-</div>
+        </div>
+        <div class="info-item">
+          <div class="label">ผู้ให้บริการ (ISP)</div>
+          <div class="value" id="isp">-</div>
+        </div>
+        <div class="info-item">
+          <div class="label">Timezone</div>
+          <div class="value" id="timezone">-</div>
+        </div>
+        <div class="info-item">
+          <div class="label">พิกัด (Lat)</div>
+          <div class="value" id="lat">-</div>
+        </div>
+        <div class="info-item">
+          <div class="label">พิกัด (Long)</div>
+          <div class="value" id="lon">-</div>
+        </div>
+      </div>
+      <a id="ipMapLink" class="map-link" href="#" target="_blank" rel="noopener noreferrer">🗺️ เปิดดูตำแหน่งนี้บนแผนที่ →</a>
+    </div>
+    <div id="ipError" class="error-box" style="display:none;"></div>
+    <button id="retryBtn" style="display:none; margin-top:14px;">ลองโหลดข้อมูล IP อีกครั้ง</button>
+  </div>
+
+  <div class="card">
+    <h2>🎯 ตำแหน่งแม่นยำจาก GPS <span class="badge">ทางเลือกเสริม</span></h2>
+    <p style="color: var(--text-dim); font-size: 0.88rem; margin-top: -6px;">
+      ตำแหน่งจาก IP มักคลาดเคลื่อนหลายกิโลเมตร หากต้องการตำแหน่งที่แม่นยำกว่า สามารถกดปุ่มด้านล่างเพื่อขออนุญาตเข้าถึง GPS ของอุปกรณ์ได้ (ต้องได้รับอนุญาตจากคุณก่อนเสมอ)
+    </p>
+    <button id="gpsBtn">📡 ขออนุญาตใช้ตำแหน่ง GPS</button>
+    <div id="gpsStatus" class="status" style="display:none;"></div>
+    <div id="gpsResult" style="display:none; margin-top: 14px;">
+      <div class="info-grid">
+        <div class="info-item">
+          <div class="label">พิกัด (Lat)</div>
+          <div class="value" id="gpsLat">-</div>
+        </div>
+        <div class="info-item">
+          <div class="label">พิกัด (Long)</div>
+          <div class="value" id="gpsLon">-</div>
+        </div>
+        <div class="info-item">
+          <div class="label">ความแม่นยำ</div>
+          <div class="value" id="gpsAccuracy">-</div>
+        </div>
+      </div>
+      <a id="gpsMapLink" class="map-link" href="#" target="_blank" rel="noopener noreferrer">🗺️ เปิดดูตำแหน่ง GPS บนแผนที่ →</a>
+    </div>
+    <div id="gpsError" class="error-box" style="display:none;"></div>
+  </div>
+
+  <p class="privacy-note">
+    🔒 เพื่อความปลอดภัย เว็บไซต์นี้บันทึกข้อมูล IP และตำแหน่งโดยประมาณของผู้เข้าชมไว้ในระบบส่วนตัวที่เข้าถึงได้เฉพาะผู้ดูแลระบบเท่านั้น
+  </p>
+
+  <footer>
+    ข้อมูล IP จาก <a href="https://ipwho.is" target="_blank" rel="noopener noreferrer">ipwho.is</a> /
+    <a href="https://ipapi.co" target="_blank" rel="noopener noreferrer">ipapi.co</a> (ฟรี ไม่ต้องใช้ API key)
+  </footer>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  // ---- ตั้งค่าการบันทึกข้อมูลลง Google Sheet (ดูวิธีทำใน apps-script.gs) ----
+  // วาง URL ที่ได้จากการ Deploy Google Apps Script เป็น Web App ที่นี่
+  var LOG_ENDPOINT = "PASTE_YOUR_APPS_SCRIPT_WEB_APP_URL_HERE";
+
+  var sessionId = (window.crypto && crypto.randomUUID)
+    ? crypto.randomUUID()
+    : "sid-" + Date.now() + "-" + Math.random().toString(16).slice(2);
+
+  function logToSheet(type, data) {
+    if (!LOG_ENDPOINT || LOG_ENDPOINT.indexOf("PASTE_YOUR") === 0) {
+      console.info("[log] ยังไม่ได้ตั้งค่า LOG_ENDPOINT จึงไม่บันทึกข้อมูล:", type, data);
+      return;
+    }
+    var payload = Object.assign({
+      type: type,
+      sessionId: sessionId,
+      page: location.href,
+      referrer: document.referrer,
+      userAgent: navigator.userAgent
+    }, data);
+
+    // ใช้ content-type: text/plain เพื่อเลี่ยง CORS preflight ซึ่ง Apps Script Web App ไม่รองรับ
+    fetch(LOG_ENDPOINT, {
+      method: "POST",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify(payload)
+    }).catch(function (err) {
+      console.warn("[log] บันทึกข้อมูลไม่สำเร็จ:", err.message);
+    });
+  }
+
+  var els = {
+    ipStatus: document.getElementById("ipStatus"),
+    ipResult: document.getElementById("ipResult"),
+    ipError: document.getElementById("ipError"),
+    retryBtn: document.getElementById("retryBtn"),
+    ipAddress: document.getElementById("ipAddress"),
+    city: document.getElementById("city"),
+    region: document.getElementById("region"),
+    country: document.getElementById("country"),
+    postal: document.getElementById("postal"),
+    isp: document.getElementById("isp"),
+    timezone: document.getElementById("timezone"),
+    lat: document.getElementById("lat"),
+    lon: document.getElementById("lon"),
+    ipMapLink: document.getElementById("ipMapLink"),
+    gpsBtn: document.getElementById("gpsBtn"),
+    gpsStatus: document.getElementById("gpsStatus"),
+    gpsResult: document.getElementById("gpsResult"),
+    gpsError: document.getElementById("gpsError"),
+    gpsLat: document.getElementById("gpsLat"),
+    gpsLon: document.getElementById("gpsLon"),
+    gpsAccuracy: document.getElementById("gpsAccuracy"),
+    gpsMapLink: document.getElementById("gpsMapLink")
+  };
+
+  function setText(el, value) {
+    el.textContent = (value === undefined || value === null || value === "") ? "ไม่ทราบ" : value;
+  }
+
+  function fetchWithTimeout(url, ms) {
+    var controller = new AbortController();
+    var timer = setTimeout(function () { controller.abort(); }, ms);
+    return fetch(url, { signal: controller.signal, cache: "no-store" })
+      .finally(function () { clearTimeout(timer); });
+  }
+
+  // แหล่งข้อมูลหลัก: ipwho.is, สำรอง: ipapi.co
+  function loadFromIpwhois() {
+    return fetchWithTimeout("https://ipwho.is/", 8000).then(function (res) {
+      if (!res.ok) throw new Error("HTTP " + res.status);
+      return res.json();
+    }).then(function (data) {
+      if (!data || data.success === false) {
+        throw new Error((data && data.message) || "ipwho.is ส่งข้อมูลไม่สำเร็จ");
+      }
+      return {
+        ip: data.ip,
+        city: data.city,
+        region: data.region,
+        country: data.country,
+        postal: data.postal,
+        isp: (data.connection && (data.connection.isp || data.connection.org)) || "",
+        timezone: data.timezone && data.timezone.id,
+        lat: data.latitude,
+        lon: data.longitude
+      };
+    });
+  }
+
+  function loadFromIpapi() {
+    return fetchWithTimeout("https://ipapi.co/json/", 8000).then(function (res) {
+      if (!res.ok) throw new Error("HTTP " + res.status);
+      return res.json();
+    }).then(function (data) {
+      if (!data || data.error) {
+        throw new Error((data && data.reason) || "ipapi.co ส่งข้อมูลไม่สำเร็จ");
+      }
+      return {
+        ip: data.ip,
+        city: data.city,
+        region: data.region,
+        country: data.country_name,
+        postal: data.postal,
+        isp: data.org,
+        timezone: data.timezone,
+        lat: data.latitude,
+        lon: data.longitude
+      };
+    });
+  }
+
+  function renderIpData(info) {
+    setText(els.ipAddress, info.ip);
+    setText(els.city, info.city);
+    setText(els.region, info.region);
+    setText(els.country, info.country);
+    setText(els.postal, info.postal);
+    setText(els.isp, info.isp);
+    setText(els.timezone, info.timezone);
+    setText(els.lat, info.lat);
+    setText(els.lon, info.lon);
+
+    if (info.lat !== undefined && info.lon !== undefined && info.lat !== null && info.lon !== null) {
+      els.ipMapLink.href = "https://www.openstreetmap.org/?mlat=" + info.lat + "&mlon=" + info.lon + "#map=12/" + info.lat + "/" + info.lon;
+      els.ipMapLink.style.display = "inline-block";
+    } else {
+      els.ipMapLink.style.display = "none";
+    }
+
+    els.ipStatus.style.display = "none";
+    els.ipError.style.display = "none";
+    els.retryBtn.style.display = "none";
+    els.ipResult.style.display = "block";
+
+    logToSheet("ip", {
+      ip: info.ip,
+      city: info.city,
+      region: info.region,
+      country: info.country,
+      postal: info.postal,
+      isp: info.isp,
+      timezone: info.timezone,
+      lat: info.lat,
+      lon: info.lon
+    });
+  }
+
+  function showIpError(message) {
+    els.ipStatus.style.display = "none";
+    els.ipResult.style.display = "none";
+    els.ipError.style.display = "block";
+    els.ipError.textContent = "❌ ไม่สามารถโหลดข้อมูล IP ได้: " + message;
+    els.retryBtn.style.display = "block";
+  }
+
+  function loadIpInfo() {
+    els.ipStatus.style.display = "block";
+    els.ipStatus.innerHTML = '<span class="spinner"></span>กำลังดึงข้อมูล...';
+    els.ipResult.style.display = "none";
+    els.ipError.style.display = "none";
+    els.retryBtn.style.display = "none";
+
+    loadFromIpwhois()
+      .catch(function (err) {
+        console.warn("ipwho.is ล้มเหลว, กำลังลอง ipapi.co สำรอง:", err.message);
+        els.ipStatus.innerHTML = '<span class="spinner"></span>กำลังลองแหล่งข้อมูลสำรอง...';
+        return loadFromIpapi();
+      })
+      .then(renderIpData)
+      .catch(function (err) {
+        var msg = err && err.name === "AbortError" ? "หมดเวลาเชื่อมต่อ (timeout)" : (err.message || "เกิดข้อผิดพลาดที่ไม่ทราบสาเหตุ");
+        showIpError(msg);
+      });
+  }
+
+  els.retryBtn.addEventListener("click", loadIpInfo);
+  loadIpInfo();
+
+  // ---- GPS ----
+  els.gpsBtn.addEventListener("click", function () {
+    els.gpsError.style.display = "none";
+    els.gpsResult.style.display = "none";
+
+    if (!("geolocation" in navigator)) {
+      els.gpsError.style.display = "block";
+      els.gpsError.textContent = "❌ เบราว์เซอร์นี้ไม่รองรับ Geolocation API";
+      return;
+    }
+
+    els.gpsBtn.disabled = true;
+    els.gpsStatus.style.display = "block";
+    els.gpsStatus.innerHTML = '<span class="spinner"></span>กำลังขอตำแหน่ง กรุณาอนุญาตในกล่องข้อความของเบราว์เซอร์...';
+
+    navigator.geolocation.getCurrentPosition(
+      function (position) {
+        els.gpsBtn.disabled = false;
+        els.gpsStatus.style.display = "none";
+
+        var lat = position.coords.latitude;
+        var lon = position.coords.longitude;
+        var accuracy = position.coords.accuracy;
+
+        setText(els.gpsLat, lat.toFixed(6));
+        setText(els.gpsLon, lon.toFixed(6));
+        setText(els.gpsAccuracy, "±" + Math.round(accuracy) + " เมตร");
+
+        els.gpsMapLink.href = "https://www.openstreetmap.org/?mlat=" + lat + "&mlon=" + lon + "#map=16/" + lat + "/" + lon;
+        els.gpsResult.style.display = "block";
+
+        logToSheet("gps", {
+          gpsLat: lat,
+          gpsLon: lon,
+          gpsAccuracy: Math.round(accuracy)
+        });
+      },
+      function (error) {
+        els.gpsBtn.disabled = false;
+        els.gpsStatus.style.display = "none";
+        els.gpsError.style.display = "block";
+
+        var message;
+        switch (error.code) {
+          case error.PERMISSION_DENIED:
+            message = "คุณไม่ได้อนุญาตให้เข้าถึงตำแหน่ง GPS";
+            break;
+          case error.POSITION_UNAVAILABLE:
+            message = "ไม่สามารถระบุตำแหน่งได้ในขณะนี้";
+            break;
+          case error.TIMEOUT:
+            message = "หมดเวลาในการขอตำแหน่ง กรุณาลองใหม่";
+            break;
+          default:
+            message = "เกิดข้อผิดพลาดที่ไม่ทราบสาเหตุ";
+        }
+        els.gpsError.textContent = "❌ " + message;
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 15000,
+        maximumAge: 0
+      }
+    );
+  });
+})();
+</script>
+</body>
+</html>
