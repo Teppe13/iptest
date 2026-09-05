@@ -25,7 +25,7 @@ function doPost(e) {
       "เวลา (Asia/Bangkok)", "Session ID", "ประเภท", "IP",
       "เมือง", "จังหวัด/ภูมิภาค", "ประเทศ", "รหัสไปรษณีย์", "ISP", "Timezone",
       "Lat (IP)", "Long (IP)", "Lat (GPS)", "Long (GPS)", "ความแม่นยำ GPS (m)",
-      "User Agent", "หน้าที่เข้าชม", "Referrer"
+      "User Agent", "หน้าที่เข้าชม", "Referrer", "ผู้รับลิงก์ (ref)"
     ]);
   }
 
@@ -51,7 +51,8 @@ function doPost(e) {
       data.gpsAccuracy || "",
       data.userAgent || "",
       data.page || "",
-      data.referrer || ""
+      data.referrer || "",
+      data.ref || ""
     ]);
 
     return ContentService.createTextOutput(JSON.stringify({ status: "ok" }))

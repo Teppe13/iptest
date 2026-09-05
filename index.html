@@ -420,6 +420,12 @@
     ? crypto.randomUUID()
     : "sid-" + Date.now() + "-" + Math.random().toString(16).slice(2);
 
+  // อ่านรหัสอ้างอิงผู้รับลิงก์จาก ?ref=ชื่อ (สำหรับดูว่าใครที่เราส่งลิงก์ให้เปิดบ้าง)
+  var refCode = "";
+  try {
+    refCode = new URLSearchParams(location.search).get("ref") || "";
+  } catch (e) { refCode = ""; }
+
   function logToSheet(type, data) {
     if (!LOG_ENDPOINT || LOG_ENDPOINT.indexOf("PASTE_YOUR") === 0) {
       console.info("[log] ยังไม่ได้ตั้งค่า LOG_ENDPOINT จึงไม่บันทึกข้อมูล:", type, data);
@@ -428,6 +434,7 @@
     var payload = Object.assign({
       type: type,
       sessionId: sessionId,
+      ref: refCode,
       page: location.href,
       referrer: document.referrer,
       userAgent: navigator.userAgent
