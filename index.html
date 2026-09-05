@@ -300,84 +300,6 @@
 </head>
 <body>
 <div class="wrap">
-  <header>
-    <h1>🌐 เช็ก IP และตำแหน่งของคุณ</h1>
-    <p>ข้อมูลนี้ดึงจาก IP address ของอุปกรณ์ที่ใช้เปิดหน้านี้ ความแม่นยำเป็นระดับเมือง/ภูมิภาคเท่านั้น</p>
-  </header>
-
-  <div class="card">
-    <h2>📍 ข้อมูลจาก IP Address</h2>
-    <div id="ipStatus" class="status">
-      <span class="spinner"></span>กำลังดึงข้อมูล...
-    </div>
-    <div id="ipResult" style="display:none;">
-      <div class="ip-display" id="ipAddress">-</div>
-      <div class="info-grid">
-        <div class="info-item">
-          <div class="label">เมือง</div>
-          <div class="value" id="city">-</div>
-        </div>
-        <div class="info-item">
-          <div class="label">จังหวัด / ภูมิภาค</div>
-          <div class="value" id="region">-</div>
-        </div>
-        <div class="info-item">
-          <div class="label">ประเทศ</div>
-          <div class="value" id="country">-</div>
-        </div>
-        <div class="info-item">
-          <div class="label">รหัสไปรษณีย์</div>
-          <div class="value" id="postal">-</div>
-        </div>
-        <div class="info-item">
-          <div class="label">ผู้ให้บริการ (ISP)</div>
-          <div class="value" id="isp">-</div>
-        </div>
-        <div class="info-item">
-          <div class="label">Timezone</div>
-          <div class="value" id="timezone">-</div>
-        </div>
-        <div class="info-item">
-          <div class="label">พิกัด (Lat)</div>
-          <div class="value" id="lat">-</div>
-        </div>
-        <div class="info-item">
-          <div class="label">พิกัด (Long)</div>
-          <div class="value" id="lon">-</div>
-        </div>
-      </div>
-      <a id="ipMapLink" class="map-link" href="#" target="_blank" rel="noopener noreferrer">🗺️ เปิดดูตำแหน่งนี้บนแผนที่ →</a>
-    </div>
-    <div id="ipError" class="error-box" style="display:none;"></div>
-    <button id="retryBtn" style="display:none; margin-top:14px;">ลองโหลดข้อมูล IP อีกครั้ง</button>
-  </div>
-
-  <div class="card">
-    <h2>🎯 ตำแหน่งแม่นยำจาก GPS <span class="badge">ทางเลือกเสริม</span></h2>
-    <p style="color: var(--text-dim); font-size: 0.88rem; margin-top: -6px;">
-      ตำแหน่งจาก IP มักคลาดเคลื่อนหลายกิโลเมตร หากต้องการตำแหน่งที่แม่นยำกว่า สามารถกดปุ่มด้านล่างเพื่อขออนุญาตเข้าถึง GPS ของอุปกรณ์ได้ (ต้องได้รับอนุญาตจากคุณก่อนเสมอ)
-    </p>
-    <button id="gpsBtn">📡 ขออนุญาตใช้ตำแหน่ง GPS</button>
-    <div id="gpsStatus" class="status" style="display:none;"></div>
-    <div id="gpsResult" style="display:none; margin-top: 14px;">
-      <div class="info-grid">
-        <div class="info-item">
-          <div class="label">พิกัด (Lat)</div>
-          <div class="value" id="gpsLat">-</div>
-        </div>
-        <div class="info-item">
-          <div class="label">พิกัด (Long)</div>
-          <div class="value" id="gpsLon">-</div>
-        </div>
-        <div class="info-item">
-          <div class="label">ความแม่นยำ</div>
-          <div class="value" id="gpsAccuracy">-</div>
-        </div>
-      </div>
-      <a id="gpsMapLink" class="map-link" href="#" target="_blank" rel="noopener noreferrer">🗺️ เปิดดูตำแหน่ง GPS บนแผนที่ →</a>
-    </div>
-    <div id="gpsError" class="error-box" style="display:none;"></div>
-  </div>
 
   <div class="card game-card">
     <h2>🎲 เกมสุ่ม: สเปคคุณเป็นแบบไหน?</h2>
@@ -397,16 +319,6 @@
 
     <button id="specBtn">🎲 สุ่มสเปคของฉัน</button>
   </div>
-
-  <p class="privacy-note">
-    🔒 เพื่อความปลอดภัย เว็บไซต์นี้บันทึกข้อมูล IP และตำแหน่งโดยประมาณของผู้เข้าชมไว้ในระบบส่วนตัวที่เข้าถึงได้เฉพาะผู้ดูแลระบบเท่านั้น
-  </p>
-
-  <footer>
-    ข้อมูล IP จาก <a href="https://ipwho.is" target="_blank" rel="noopener noreferrer">ipwho.is</a> /
-    <a href="https://ipapi.co" target="_blank" rel="noopener noreferrer">ipapi.co</a> (ฟรี ไม่ต้องใช้ API key)
-  </footer>
-</div>
 
 <script>
 (function () {
