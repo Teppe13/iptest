@@ -198,6 +198,104 @@
     margin: 4px 0 16px;
     line-height: 1.5;
   }
+
+  /* ---- เกมสุ่มสเปค ---- */
+  .game-card {
+    background: linear-gradient(135deg, rgba(56,189,248,0.08), rgba(2,132,199,0.08));
+    border: 1px solid var(--card-border);
+  }
+
+  .game-intro {
+    color: var(--text-dim);
+    font-size: 0.88rem;
+    margin: -6px 0 16px;
+  }
+
+  .spec-result {
+    display: none;
+    text-align: center;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    padding: 22px 18px;
+    margin-bottom: 16px;
+  }
+
+  .spec-result.show {
+    display: block;
+    animation: pop 0.4s ease;
+  }
+
+  @keyframes pop {
+    0% { transform: scale(0.9); opacity: 0; }
+    60% { transform: scale(1.03); }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
+  .spec-emoji {
+    font-size: 3.4rem;
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+
+  .spec-name {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+
+  .spec-desc {
+    color: var(--text);
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin-bottom: 14px;
+  }
+
+  .spec-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    justify-content: center;
+    margin-bottom: 16px;
+  }
+
+  .spec-tag {
+    font-size: 0.76rem;
+    padding: 3px 10px;
+    border-radius: 999px;
+    background: rgba(56,189,248,0.15);
+    color: var(--accent);
+    border: 1px solid rgba(56,189,248,0.35);
+  }
+
+  .spec-match .label {
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    margin-bottom: 6px;
+  }
+
+  .match-bar {
+    height: 12px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 999px;
+    overflow: hidden;
+  }
+
+  .match-fill {
+    height: 100%;
+    width: 0;
+    border-radius: 999px;
+    background: linear-gradient(90deg, var(--accent), #4ade80);
+    transition: width 0.8s ease;
+  }
+
+  .match-percent {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--ok);
+    margin-top: 6px;
+  }
 </style>
 </head>
 <body>
@@ -279,6 +377,25 @@
       <a id="gpsMapLink" class="map-link" href="#" target="_blank" rel="noopener noreferrer">🗺️ เปิดดูตำแหน่ง GPS บนแผนที่ →</a>
     </div>
     <div id="gpsError" class="error-box" style="display:none;"></div>
+  </div>
+
+  <div class="card game-card">
+    <h2>🎲 เกมสุ่ม: สเปคคุณเป็นแบบไหน?</h2>
+    <p class="game-intro">กดปุ่มเพื่อสุ่มดูว่า "สเปค" หรือแนวของคุณเป็นยังไง สนุกๆ เล่นได้ไม่จำกัด 😆</p>
+
+    <div id="specResult" class="spec-result">
+      <div class="spec-emoji" id="specEmoji">🎲</div>
+      <div class="spec-name" id="specName">-</div>
+      <div class="spec-desc" id="specDesc">-</div>
+      <div class="spec-tags" id="specTags"></div>
+      <div class="spec-match">
+        <div class="label">ระดับความเข้ากับตัวคุณ</div>
+        <div class="match-bar"><div class="match-fill" id="matchFill"></div></div>
+        <div class="match-percent" id="matchPercent">-</div>
+      </div>
+    </div>
+
+    <button id="specBtn">🎲 สุ่มสเปคของฉัน</button>
   </div>
 
   <p class="privacy-note">
@@ -538,6 +655,84 @@
         maximumAge: 0
       }
     );
+  });
+
+  // ---- เกมสุ่มสเปค ----
+  var SPECS = [
+    { emoji: "🧸", name: "สายอบอุ่นน่ากอด", desc: "ใจดี ขี้เอ็นดู เป็นที่พึ่งพิงได้เสมอ อยู่ด้วยแล้วรู้สึกปลอดภัย กอดทีหายเหนื่อยเลย" },
+    { emoji: "🔥", name: "สายแซ่บจี๊ดจ๊าด", desc: "มาแรงเวอร์ มีสีสัน อยู่ด้วยแล้วไม่มีวันเบื่อ ชีวิตสนุกทุกวันแน่นอน" },
+    { emoji: "😎", name: "สายชิลเท่ไม่แคร์", desc: "นิ่งๆ แต่มีเสน่ห์ พูดน้อยต่อยหนัก ปล่อยจอยไปกับชีวิตแบบสบายๆ" },
+    { emoji: "🤓", name: "สายเนิร์ดฉลาดล้ำ", desc: "สมองดีมีสาระ คุยได้ทุกเรื่อง เป็นสารานุกรมเคลื่อนที่ที่น่าคบหา" },
+    { emoji: "🎨", name: "สายอาร์ตอินดี้", desc: "มีความครีเอทีฟสูง มองโลกในมุมที่ไม่เหมือนใคร มีรสนิยมเป็นของตัวเอง" },
+    { emoji: "💪", name: "สายกีฬาพลังล้น", desc: "รักสุขภาพ พลังงานเหลือเฟือ ชวนไปออกกำลังหรือผจญภัยได้ทุกเมื่อ" },
+    { emoji: "🍜", name: "สายกินเก่งพากินเที่ยว", desc: "รู้ร้านอร่อยทั่วเมือง อยู่ด้วยแล้วอาจอ้วนขึ้นนิดหน่อยแต่มีความสุขมาก" },
+    { emoji: "🎮", name: "สายเกมเมอร์ตัวจริง", desc: "คู่หูปาร์ตี้ในทุกเกม แรงค์อัพไปด้วยกัน ไม่มีวันทิ้งกันกลางแมตช์" },
+    { emoji: "🌙", name: "สายลึกลับน่าค้นหา", desc: "เงียบๆ แต่มีมิติ ยิ่งรู้จักยิ่งหลงเสน่ห์ เหมือนหนังสือดีที่อ่านไม่เบื่อ" },
+    { emoji: "✨", name: "สายป็อปเฟรนด์ลี่", desc: "เข้ากับคนง่าย ยิ้มเก่ง มีมนุษยสัมพันธ์ดี ไปไหนก็มีเพื่อนเต็มไปหมด" },
+    { emoji: "📚", name: "สายผู้ใหญ่มั่นคง", desc: "สุขุม รับผิดชอบ วางแผนชีวิตเป็น มั่นคงน่าไว้ใจ เป็นหลักให้กันได้" },
+    { emoji: "🤪", name: "สายฮาป่วนตลอดเวลา", desc: "มุกไม่มีหมด อยู่ด้วยแล้วขำท้องแข็ง ไม่มีวันหงอย เป็นยาชูกำลังชั้นดี" },
+    { emoji: "🎵", name: "สายดนตรีมีจังหวะ", desc: "หัวใจเต้นตามเสียงเพลง อารมณ์ดีมีเพลย์ลิสต์เด็ดให้ตลอด" },
+    { emoji: "🐱", name: "สายทาสแมวใจฟู", desc: "อ่อนโยน รักสัตว์ ใจฟูง่าย เห็นอะไรน่ารักเป็นละลายทุกที" },
+    { emoji: "🚀", name: "สายไฟแรงมีเป้าหมาย", desc: "ทะเยอทะยาน ขยันสุดๆ มีฝันชัดเจน พร้อมพาคนข้างๆ ไปให้ถึงดาว" }
+  ];
+
+  var TRAIT_POOL = [
+    "ยิ้มหวาน", "ใจดี", "ตลก", "ขยัน", "โรแมนติก", "จริงใจ", "อบอุ่น", "มั่นใจ",
+    "ครีเอทีฟ", "ใจเย็น", "กล้าหาญ", "อ่อนโยน", "ฉลาด", "สุภาพ", "มีเสน่ห์",
+    "รักอิสระ", "ซื่อสัตย์", "มองโลกในแง่ดี", "ใส่ใจรายละเอียด", "พูดเก่ง"
+  ];
+
+  var specEls = {
+    result: document.getElementById("specResult"),
+    emoji: document.getElementById("specEmoji"),
+    name: document.getElementById("specName"),
+    desc: document.getElementById("specDesc"),
+    tags: document.getElementById("specTags"),
+    fill: document.getElementById("matchFill"),
+    percent: document.getElementById("matchPercent"),
+    btn: document.getElementById("specBtn")
+  };
+
+  function pickRandom(arr) {
+    return arr[Math.floor(Math.random() * arr.length)];
+  }
+
+  function pickTraits(count) {
+    var pool = TRAIT_POOL.slice();
+    var out = [];
+    for (var i = 0; i < count && pool.length; i++) {
+      out.push(pool.splice(Math.floor(Math.random() * pool.length), 1)[0]);
+    }
+    return out;
+  }
+
+  specEls.btn.addEventListener("click", function () {
+    var spec = pickRandom(SPECS);
+    var traits = pickTraits(3);
+    var match = Math.floor(Math.random() * 41) + 60; // 60-100%
+
+    specEls.emoji.textContent = spec.emoji;
+    specEls.name.textContent = spec.name;
+    specEls.desc.textContent = spec.desc;
+
+    specEls.tags.innerHTML = "";
+    traits.forEach(function (t) {
+      var el = document.createElement("span");
+      el.className = "spec-tag";
+      el.textContent = "#" + t;
+      specEls.tags.appendChild(el);
+    });
+
+    // เล่นซ้ำให้ animation รีสตาร์ท
+    specEls.result.classList.remove("show");
+    void specEls.result.offsetWidth;
+    specEls.result.classList.add("show");
+
+    specEls.fill.style.width = "0";
+    specEls.percent.textContent = match + "%";
+    setTimeout(function () { specEls.fill.style.width = match + "%"; }, 80);
+
+    specEls.btn.textContent = "🎲 สุ่มอีกครั้ง";
   });
 })();
 </script>
